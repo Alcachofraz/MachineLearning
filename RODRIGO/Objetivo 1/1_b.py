@@ -40,7 +40,8 @@ def get_train_data():
     train_data = np.concatenate(([train_data]*100))
 
     for i in range(SAMPLES - len(train_data)):
-        train_data = np.append(train_data, [[rnd.randint(0, 1) for i in range(16)]], axis=0)
+        train_data = np.append(
+            train_data, [[rnd.randint(0, 1) for i in range(16)]], axis=0)
 
     np.random.shuffle(train_data)
 
@@ -127,8 +128,10 @@ def __main__():
 
         model.save('models/1_b', save_format='tf')
 
-        np.savetxt('models/1_b/test_data.txt', test_data.round(), fmt='%d', delimiter=',')
-        np.savetxt('models/1_b/model_predict.txt', predictions, fmt='%d', delimiter=',')
+        np.savetxt('models/1_b/test_data.txt',
+                   test_data.round(), fmt='%d', delimiter=',')
+        np.savetxt('models/1_b/model_predict.txt',
+                   predictions, fmt='%d', delimiter=',')
 
         print('\nSamples: ', SAMPLES, ' | Epochs: ', EPOCHS, '\n')
 

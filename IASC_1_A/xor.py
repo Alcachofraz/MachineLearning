@@ -12,16 +12,9 @@ regr = MLPRegressor(hidden_layer_sizes=(2),
 
 model = regr.fit(X, Y)
 
-res = 50
-output = [None] * res
+print(model)
 
-for i in range(res):
-    output[i] = [None] * res
-    for j in range(res):
-        x = np.array([i/res, j/res]).reshape(1, -1)
-        output[i][j] = model.predict(x)[0]
-
-
+"""
 # Visualize results
 fig = plt.figure(figsize=(10, 8))
 ax = fig.add_subplot(111)
@@ -39,3 +32,4 @@ for text, corner in table.items():
     ax.annotate(text, xy=corner, size=15, annotation_clip=False)
 
 plt.show()
+"""
