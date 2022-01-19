@@ -2,6 +2,8 @@ from sklearn.neural_network import MLPRegressor
 import numpy as np
 import matplotlib.pyplot as plt
 import random as rnd
+import pygame.midi as midi
+import pygame
 
 """
 ---- CONTEXTUALIZAÇÃO ----
@@ -53,67 +55,204 @@ Saída:
 
 """
 
-CHORD_NUM = 24
-NOTES_NUM = 12
+USING_MIDI = None
+
+HIDDEN_LAYERS = (1024, 512)
+ACTIVATION = 'relu'
+SOLVER = 'adam'
+VERBOSE = False
+
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
+NUMBER_OF_CHORDS = 24
+NUMBER_OF_MINOR_CHORDS = 12
+NUMBER_OF_MAJOR_CHORDS = 12
 NOTES_PER_CHORD = 3
+NOTES_PER_OCTAVE = 12
 
 MAJOR_CHORD_PATTERN = [1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0]
 MINOR_CHORD_PATTERN = [1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0]
 
-OUTPUT = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+OUTPUT = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-TOTAL_DATA_LENGTH = 10000
-FORCED_CHORDS_NUM = 100 # Per chord
-RANDOM_CHORDS_NUM = TOTAL_DATA_LENGTH - (FORCED_CHORDS_NUM * CHORD_NUM)
+FORCED_CHORDS_NUM = 100  # Per chord
+RANDOM_CHORDS_NUM = 2400
+TOTAL_DATA_LENGTH = (FORCED_CHORDS_NUM * NUMBER_OF_CHORDS) + RANDOM_CHORDS_NUM
 
-"""
-This means in 10000 chords, 2400 will be granted meaningful chords
-and 7600 will be random chords.
-"""
+CHORD_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B',
+               'Cm', 'C#m', 'Dm', 'D#m', 'Em', 'Fm', 'F#m', 'Gm', 'G#m', 'Am', 'A#m', 'Bm', ]
 
-# Takes an array [list] (octave) and rotates its positions right [n] times.
-def rotate_right(octave, n):
-    return (octave[len(octave) - n:len(octave)]
-                 + octave[0:len(octave) - n])
 
-# Takes an array [list] (octave) and rotates its positions right [n] times.
-def rotate_left(octave, n):
-    return (octave[len(octave) - n:len(octave)]
-                 + octave[0:len(octave) - n])
+def rotate(octave, n):
+    """
+    Takes an array [list] (octave) and rotates its positions [n] times.
+    """
+    return [octave[(i - n) % len(octave)]
+            for i, x in enumerate(octave)]
 
-# Takes an array [list] (octave) and returns a 24 length list indicating
-# which chord is being played, if any.
+
 def is_chord(octave):
+    """
+    Takes an array [list] (octave) and returns a 24 length list indicating
+    which chord is being played, if any.
+    """
     ret = OUTPUT.copy()
-    if octave.count(1) != 2:
+    if np.count_nonzero(octave) != NOTES_PER_CHORD:
         return ret
-    for i in range(NOTES_NUM):
-        temp = rotate_right(octave, i)
+    for i in range(NOTES_PER_OCTAVE):
+        temp = rotate(octave, -i)
         if temp[0] == 1 and temp[7] == 1:
             if temp[3] == 1:
-                ret[]
-                return []
+                ret[i + NOTES_PER_OCTAVE] = 1
+                return ret
             elif temp[4] == 1:
-            else:
+                ret[i] = 1
+                return ret
+    return ret
 
 
+def random_chord():
+    return [[rnd.randint(0, 1) for i in range(NOTES_PER_OCTAVE)]]
+
+
+def print_devices():
+    for n in range(midi.get_count()):
+        print(n, midi.get_device_info(n))
+
+
+def to_chord(octave):
+    if octave.count(1) == 1:
+        return CHORD_NAMES[octave.index(1)]
+    else:
+        return 'UNKNOWN'
+
+
+"""
+-----------
+Train Model
+-----------
+"""
+print('Learning...')
+
+# Initialise X (training data) empty:
 X = np.array([], dtype=int)
+
+# Initialise Y (target data) empty:
 Y = np.array([], dtype=int)
 
-for i in range(NOTES_NUM):
-    X = np.append(rotate_right(MAJOR_CHORD_PATTERN, i))
-    Y = np.append()
+# Append to X all of the [NUMBER_OF_MAJOR_CHORDS] major chords, [FORCED_CHORDS_NUM] times each:
+for i in range(NUMBER_OF_MAJOR_CHORDS):
+    X = np.append(X, rotate(MAJOR_CHORD_PATTERN, i) * FORCED_CHORDS_NUM)
 
-Y = np.reshape(Y, (TOTAL_DATA_LENGTH, 2))
+# Append to X all of the [NUMBER_OF_MINOR_CHORDS] minor chords, [FORCED_CHORDS_NUM] times each:
+for i in range(NUMBER_OF_MINOR_CHORDS):
+    X = np.append(X, rotate(MINOR_CHORD_PATTERN, i) * FORCED_CHORDS_NUM)
 
-regr = MLPRegressor(hidden_layer_sizes=(16, 8),
-    activation = 'tanh',
-    solver = 'adam',
-    max_iter = 10000,
-    verbose = False)
+# Append to X [RANDOM_CHORDS_NUM] random chords:
+for i in range(RANDOM_CHORDS_NUM):
+    X = np.append(X, random_chord())
 
+X = np.reshape(X, (TOTAL_DATA_LENGTH, NOTES_PER_OCTAVE))
+
+# Shuffle X:
+np.random.shuffle(X)
+
+# Append target data:
+for i in range(TOTAL_DATA_LENGTH):
+    Y = np.append(Y, is_chord(X[i]))
+
+Y = np.reshape(Y, (TOTAL_DATA_LENGTH, NUMBER_OF_CHORDS))
+
+# Train model:
+regr = MLPRegressor(
+    hidden_layer_sizes=HIDDEN_LAYERS,
+    activation=ACTIVATION,
+    solver=SOLVER,
+    verbose=VERBOSE,
+)
 model = regr.fit(X, Y)
 
-TEST = np.concatenate(([A], [B], random_pattern(16)))
-print(TEST)
-print(model.predict(TEST).round())
+print('Model is ready!')
+
+
+"""
+--------
+Ask Midi
+--------
+"""
+while USING_MIDI == None:
+    msg = input('Do you want to use MIDI input? [y/n]')
+    if msg == 'y':
+        USING_MIDI = True
+    elif msg == 'n':
+        USING_MIDI = False
+    else:
+        print('Invalid input.')
+
+if USING_MIDI:
+    """
+    ---------------------------------
+    Initialise and Choose Pygame MIDI
+    ---------------------------------
+    """
+    midi.init()
+    print_devices()
+    device_id = int(input('Choose an input device [ID]:'))
+    input_device = midi.Input(int(device_id))
+    print('Connecting to ' + str(midi.get_device_info(device_id)) + '...')
+
+    """
+    -------------------------
+    Initialise Pygame Display
+    -------------------------
+    """
+    pygame.init()
+    display_surface = pygame.display.set_mode((400, 400))
+    pygame.display.set_caption('Chords AI')
+
+    font = pygame.font.Font("C:\Windows\Fonts\segoeprb.ttf", 25)
+    text = font.render('UNKNOWN', True, BLACK)
+
+    """
+    -------------------------
+    Listen to Chords on Piano
+    -------------------------
+    """
+    current_chord = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    while True:
+        display_surface.fill(WHITE)
+        display_surface.blit(text, (22, 0))
+
+        for eve in pygame.event.get():
+            if eve.type == pygame.QUIT:
+                pygame.quit()
+
+        if input_device.poll():
+            event = input_device.read(1)[0]
+            data = event[0]
+            note = data[1]
+            velocity = data[2]
+            if velocity == 0:
+                current_chord[note % NOTES_PER_OCTAVE] = 0
+            else:
+                current_chord[note % NOTES_PER_OCTAVE] = 1
+            output = list(model.predict([current_chord]).round()[0])
+            text = font.render(to_chord(output), True, BLACK)
+        pygame.display.update()
+else:
+    """
+    ------------------
+    Test Some Examples
+    ------------------
+    """
+    print('PLAYED:    C')
+    print('PREDICTED: ' +
+          to_chord(list(model.predict([[1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0]]).round()[0])))
+    print('PLAYED:    Fm')
+    print('PREDICTED: ' +
+          to_chord(list(model.predict([[1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0]]).round()[0])))
+    print('PLAYED:    Unknown')
+    print('PREDICTED: ' +
+          to_chord(list(model.predict([[1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0]]).round()[0])))
