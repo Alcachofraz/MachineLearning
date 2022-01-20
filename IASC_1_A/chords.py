@@ -227,6 +227,8 @@ if USING_MIDI:
 
         for eve in pygame.event.get():
             if eve.type == pygame.QUIT:
+                input_device.close()
+                midi.quit()
                 pygame.quit()
 
         if input_device.poll():
