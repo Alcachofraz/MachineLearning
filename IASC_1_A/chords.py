@@ -128,6 +128,33 @@ def to_chord(octave):
     else:
         return 'UNKNOWN'
 
+def event_to_chord(event):
+    if event.key == pygame.K_q:
+        return 0
+    elif event.key == pygame.K_2:
+        return 1
+    elif event.key == pygame.K_w:
+        return 2
+    elif event.key == pygame.K_e:
+        return 3
+    elif event.key == pygame.K_4:
+        return 4
+    elif event.key == pygame.K_r:
+        return 5
+    elif event.key == pygame.K_5:
+        return 6
+    elif event.key == pygame.K_t:
+        return 7
+    elif event.key == pygame.K_6:
+        return 8
+    elif event.key == pygame.K_y:
+        return 9
+    elif event.key == pygame.K_7:
+        return 10
+    elif event.key == pygame.K_u:
+        return 11
+    else:
+        return -1
 
 """
 -----------
@@ -203,58 +230,61 @@ if USING_MIDI:
     input_device = midi.Input(int(device_id))
     print('Connecting to ' + str(midi.get_device_info(device_id)) + '...')
 
-    """
-    -------------------------
-    Initialise Pygame Display
-    -------------------------
-    """
-    pygame.init()
-    display_surface = pygame.display.set_mode((400, 400))
-    pygame.display.set_caption('Chords AI')
+"""
+-------------------------
+Initialise Pygame Display
+-------------------------
+"""
+pygame.init()
+display_surface = pygame.display.set_mode((400, 400))
+pygame.display.set_caption('Chords AI')
 
-    font = pygame.font.Font("C:\Windows\Fonts\segoeprb.ttf", 25)
-    text = font.render('UNKNOWN', True, BLACK)
+font = pygame.font.Font("C:\Windows\Fonts\segoeprb.ttf", 25)
+text = font.render('UNKNOWN', True, BLACK)
 
-    """
-    -------------------------
-    Listen to Chords on Piano
-    -------------------------
-    """
-    current_chord = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    while True:
-        display_surface.fill(WHITE)
-        display_surface.blit(text, (22, 0))
+"""
+print('PLAYED:    C')
+print('PREDICTED: ' +
+        to_chord(list(model.predict([[1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0]]).round()[0])))
+print('PLAYED:    Fm')
+print('PREDICTED: ' +
+        to_chord(list(model.predict([[1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0]]).round()[0])))
+print('PLAYED:    Unknown')
+print('PREDICTED: ' +
+        to_chord(list(model.predict([[1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0]]).round()[0])))
+"""
 
-        for eve in pygame.event.get():
-            if eve.type == pygame.QUIT:
-                input_device.close()
-                midi.quit()
-                pygame.quit()
+"""
+-------------------------
+Listen to Chords on Piano
+-------------------------
+"""
+current_chord = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+while True:
+    display_surface.fill(WHITE)
+    display_surface.blit(text, (22, 0))
 
-        if input_device.poll():
-            event = input_device.read(1)[0]
-            data = event[0]
-            note = data[1]
-            velocity = data[2]
-            if velocity == 0:
-                current_chord[note % NOTES_PER_OCTAVE] = 0
-            else:
-                current_chord[note % NOTES_PER_OCTAVE] = 1
-            output = list(model.predict([current_chord]).round()[0])
-            text = font.render(to_chord(output), True, BLACK)
-        pygame.display.update()
-else:
-    """
-    ------------------
-    Test Some Examples
-    ------------------
-    """
-    print('PLAYED:    C')
-    print('PREDICTED: ' +
-          to_chord(list(model.predict([[1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0]]).round()[0])))
-    print('PLAYED:    Fm')
-    print('PREDICTED: ' +
-          to_chord(list(model.predict([[1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0]]).round()[0])))
-    print('PLAYED:    Unknown')
-    print('PREDICTED: ' +
-          to_chord(list(model.predict([[1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0]]).round()[0])))
+    for eve in pygame.event.get():
+        if eve.type == pygame.QUIT:
+            input_device.close()
+            midi.quit()
+            pygame.quit()
+        elif not USING_MIDI:
+            if eve.type == pygame.KEYUP:
+                current_chord[event_to_chord(event)] = 0
+            elif eve.type == pygame.KEYDOWN:
+                current_chord[event_to_chord(event)] = 1
+
+    if USING_MIDI and input_device.poll():
+        event = input_device.read(1)[0]
+        data = event[0]
+        note = data[1]
+        velocity = data[2]
+        if velocity == 0:
+            current_chord[note % NOTES_PER_OCTAVE] = 0
+        else:
+            current_chord[note % NOTES_PER_OCTAVE] = 1
+
+    output = list(model.predict([current_chord]).round()[0])
+    text = font.render(to_chord(output), True, BLACK)
+    pygame.display.update()
