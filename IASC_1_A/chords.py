@@ -135,9 +135,9 @@ def event_to_chord(event):
         return 1
     elif event.key == pygame.K_w:
         return 2
-    elif event.key == pygame.K_e:
+    elif event.key == pygame.K_3:
         return 3
-    elif event.key == pygame.K_4:
+    elif event.key == pygame.K_e:
         return 4
     elif event.key == pygame.K_r:
         return 5
@@ -153,6 +153,8 @@ def event_to_chord(event):
         return 10
     elif event.key == pygame.K_u:
         return 11
+    elif event.key == pygame.K_i:
+        return 0
     else:
         return -1
 
@@ -242,6 +244,8 @@ pygame.display.set_caption('Chords AI')
 font = pygame.font.Font("C:\Windows\Fonts\segoeprb.ttf", 25)
 text = font.render('UNKNOWN', True, BLACK)
 
+print('Ready! Play something...')
+
 """
 print('PLAYED:    C')
 print('PREDICTED: ' +
@@ -271,9 +275,9 @@ while True:
             pygame.quit()
         elif not USING_MIDI:
             if eve.type == pygame.KEYUP:
-                current_chord[event_to_chord(event)] = 0
+                current_chord[event_to_chord(eve)] = 0
             elif eve.type == pygame.KEYDOWN:
-                current_chord[event_to_chord(event)] = 1
+                current_chord[event_to_chord(eve)] = 1
 
     if USING_MIDI and input_device.poll():
         event = input_device.read(1)[0]
