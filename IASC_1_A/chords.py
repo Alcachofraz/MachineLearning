@@ -157,8 +157,6 @@ def event_to_chord(event):
         return 10
     elif event.key == pygame.K_u:
         return 11
-    elif event.key == pygame.K_i:
-        return 0
     else:
         return -1
 
@@ -286,12 +284,15 @@ while True:
             pygame.quit()
         elif not USING_MIDI:
             if eve.type == pygame.KEYUP:
-                current_chord[event_to_chord(eve)] = 0
+                note = event_to_chord(eve)
+                if (note >= 0):
+                    current_chord[note] = 0
             elif eve.type == pygame.KEYDOWN:
                 note = event_to_chord(eve)
-                current_chord[note] = 1
-                channels[note].play(pygame.mixer.Sound(
-                    'IASC_1_A\\notes\\' + str(NOTES[note])))
+                if (note >= 0):
+                    current_chord[note] = 1
+                    channels[note].play(pygame.mixer.Sound(
+                        'IASC_1_A\\notes\\' + str(NOTES[note])))
 
     if USING_MIDI and input_device.poll():
         event = input_device.read(1)[0]
