@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import random as rnd
 import pygame.midi as midi
 import pygame
+from pygame.locals import *
 
 """
 ---- CONTEXTUALIZAÇÃO ----
@@ -241,11 +242,13 @@ Initialise Pygame
 -----------------
 """
 pygame.init()
-display_surface = pygame.display.set_mode((400, 400))
+screen = pygame.display.set_mode((700, 700), RESIZABLE)
 pygame.display.set_caption('Chords AI')
 
 font = pygame.font.Font("C:\Windows\Fonts\segoeprb.ttf", 25)
 text = font.render('UNKNOWN', True, BLACK)
+image = pygame.image.load(
+    'IASC_1_A\\notes\\piano.png')
 
 pygame.mixer.init()
 pygame.mixer.set_num_channels(NOTES_PER_OCTAVE)  # Number of notes
@@ -274,13 +277,15 @@ Listen to Chords on Piano
 """
 current_chord = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 while True:
-    display_surface.fill(WHITE)
-    display_surface.blit(text, (22, 0))
+    screen.fill(WHITE)
+    screen.blit(text, (24, 0))
+    screen.blit(image, (0, 48))
 
     for eve in pygame.event.get():
         if eve.type == pygame.QUIT:
-            input_device.close()
-            midi.quit()
+            if USING_MIDI:
+                input_device.close()
+                midi.quit()
             pygame.quit()
         elif not USING_MIDI:
             if eve.type == pygame.KEYUP:
