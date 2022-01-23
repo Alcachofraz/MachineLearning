@@ -84,6 +84,9 @@ TOTAL_DATA_LENGTH = (FORCED_CHORDS_NUM * NUMBER_OF_CHORDS) + RANDOM_CHORDS_NUM
 CHORD_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B',
                'Cm', 'C#m', 'Dm', 'D#m', 'Em', 'Fm', 'F#m', 'Gm', 'G#m', 'Am', 'A#m', 'Bm', ]
 
+NOTES = ['C.ogg', 'C#.ogg', 'D.ogg', 'D#.ogg',
+         'E.ogg', 'F.ogg', 'F#.ogg', 'G.ogg', 'G#.ogg', 'A.ogg', 'A#.ogg', 'B.ogg', ]
+
 
 def rotate(octave, n):
     """
@@ -128,6 +131,7 @@ def to_chord(octave):
     else:
         return 'UNKNOWN'
 
+
 def event_to_chord(event):
     if event.key == pygame.K_q:
         return 0
@@ -157,6 +161,7 @@ def event_to_chord(event):
         return 0
     else:
         return -1
+
 
 """
 -----------
@@ -233,9 +238,9 @@ if USING_MIDI:
     print('Connecting to ' + str(midi.get_device_info(device_id)) + '...')
 
 """
--------------------------
-Initialise Pygame Display
--------------------------
+-----------------
+Initialise Pygame
+-----------------
 """
 pygame.init()
 display_surface = pygame.display.set_mode((400, 400))
@@ -243,6 +248,12 @@ pygame.display.set_caption('Chords AI')
 
 font = pygame.font.Font("C:\Windows\Fonts\segoeprb.ttf", 25)
 text = font.render('UNKNOWN', True, BLACK)
+
+pygame.mixer.init()
+pygame.mixer.set_num_channels(NOTES_PER_OCTAVE)  # Number of notes
+channels = []
+for i in range(NOTES_PER_OCTAVE):
+    channels.append(pygame.mixer.Channel(i))
 
 print('Ready! Play something...')
 
@@ -277,7 +288,10 @@ while True:
             if eve.type == pygame.KEYUP:
                 current_chord[event_to_chord(eve)] = 0
             elif eve.type == pygame.KEYDOWN:
-                current_chord[event_to_chord(eve)] = 1
+                note = event_to_chord(eve)
+                current_chord[note] = 1
+                channels[note].play(pygame.mixer.Sound(
+                    'IASC_1_A\\notes\\' + str(NOTES[note])))
 
     if USING_MIDI and input_device.poll():
         event = input_device.read(1)[0]
