@@ -2,7 +2,7 @@ from sklearn.neural_network import MLPRegressor
 import numpy as np
 import matplotlib.pyplot as plt
 import random as rnd
-import pygame.midi as midi
+import pygame.midi
 import pygame
 from pygame.locals import *
 
@@ -122,8 +122,8 @@ def random_chord():
 
 
 def print_devices():
-    for n in range(midi.get_count()):
-        print(n, midi.get_device_info(n))
+    for n in range(pygame.midi.get_count()):
+        print(n, pygame.midi.get_device_info(n))
 
 
 def to_chord(octave):
@@ -230,11 +230,12 @@ if USING_MIDI:
     Initialise and Choose Pygame MIDI
     ---------------------------------
     """
-    midi.init()
+    pygame.midi.init()
     print_devices()
-    device_id = int(input('Choose an input device [ID]:'))
-    input_device = midi.Input(int(device_id))
-    print('Connecting to ' + str(midi.get_device_info(device_id)) + '...')
+    device_id: int = int(input('Choose an input device [ID]:'))
+    input_device = pygame.midi.Input(device_id)
+    print('Connecting to ' + str(pygame.midi.get_device_info(device_id)) + '...')
+
 
 """
 -----------------
@@ -256,7 +257,9 @@ channels = []
 for i in range(NOTES_PER_OCTAVE):
     channels.append(pygame.mixer.Channel(i))
 
+
 print('Ready! Play something...')
+
 
 """
 print('PLAYED:    C')
@@ -285,8 +288,9 @@ while True:
         if eve.type == pygame.QUIT:
             if USING_MIDI:
                 input_device.close()
-                midi.quit()
+                pygame.midi.quit()
             pygame.quit()
+            exit()
         elif not USING_MIDI:
             if eve.type == pygame.KEYUP:
                 note = event_to_chord(eve)
@@ -302,12 +306,14 @@ while True:
     if USING_MIDI and input_device.poll():
         event = input_device.read(1)[0]
         data = event[0]
-        note = data[1]
+        note = data[1] % NOTES_PER_OCTAVE
         velocity = data[2]
         if velocity == 0:
-            current_chord[note % NOTES_PER_OCTAVE] = 0
+            current_chord[note] = 0
         else:
-            current_chord[note % NOTES_PER_OCTAVE] = 1
+            current_chord[note] = 1
+            channels[note].play(pygame.mixer.Sound(
+                'IASC_1_A\\notes\\' + str(NOTES[note])))
 
     output = list(model.predict([current_chord]).round()[0])
     text = font.render(to_chord(output), True, BLACK)
