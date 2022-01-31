@@ -8,6 +8,7 @@ class NQueens:
         # np.random.shuffle(self.state)
         self.state = [rnd.randint(1, N) for i in range(N)]
         if printState:
+            print(self.state)
             self.printState(self.state, 'Initial board')
 
     def printState(self, state: list, msg: str = ''):
@@ -69,7 +70,7 @@ class NQueens:
 
         return bestState
 
-    def stateValue(self, state: list):
+    def stateValue(self, state: list):  # number of collisions
         value = 0
         for i in range(len(state) - 1):
             for j in range(i+1, len(state)):
@@ -77,7 +78,7 @@ class NQueens:
                     value += 1
 
         value *= -1
-        return value
+        return value  # returns negative value so that the best is closer to 0
 
     ### Genetic algorithm ###
 
@@ -93,6 +94,6 @@ class NQueens:
         # population = np.reshape(population, (populationSize, self.N))
         return population
 
-    def fitnessFunction(self, element: list):
+    def fitnessFunction(self, element: list) -> float:
         value = self.stateValue(element)*-1
-        return int(1000/(value+1))
+        return 1/(value+1)
