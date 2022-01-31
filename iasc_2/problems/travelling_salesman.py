@@ -1,6 +1,6 @@
 import random as rnd
 import math
-from hill_climbing_problem.hill_climbing_problem import HillClimbingProblem
+from search_algorithms.hill_climbing.hill_climbing_problem import HillClimbingProblem
 
 
 class TravellingSalesman(HillClimbingProblem):
@@ -33,6 +33,11 @@ class TravellingSalesman(HillClimbingProblem):
                         rnd.randint(0, self.world_size)]
             state.append(city)
         return state
+
+    def shuffle(self, state):
+        new_state = state.copy()
+        rnd.shuffle(new_state)
+        return new_state
 
     def best_neighbour(self, state):
         """
@@ -71,11 +76,11 @@ class TravellingSalesman(HillClimbingProblem):
         the new state.
         """
         # Randomize cities to swap:
-        c1 = rnd.randint(0, self.n_cities)
-        c2 = rnd.randint(0, self.n_cities)
+        c1 = rnd.randint(0, self.n_cities - 1)
+        c2 = rnd.randint(0, self.n_cities - 1)
         # Enssure c2 != c1:
         while c2 == c1:
-            c2 = rnd.randint(0, self.n_cities)
+            c2 = rnd.randint(0, self.n_cities - 1)
 
         # Return state with swapped cities:
         return self.swap_cities(state.copy(), c1, c2)

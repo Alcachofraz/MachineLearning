@@ -11,13 +11,13 @@ class StochasticHillClimbing(SearchAlgorithm):
     def __init__(self, problem, n_iterations_without_change=24):
         self.problem = problem
         self.n_iterations_without_change = n_iterations_without_change
+        self.initial_state = self.problem.initial_state()
+        self.initial_value = self.problem.value(self.initial_state)
 
     def search(self):
         current_state = None
         current_value = None
-        previous_state = self.problem.initial_state()
-        self.initial_state = previous_state
-        self.initial_value = self.problem.value(self.initial_state)
+        previous_state = self.initial_state
         iterations_without_change = 0
 
         while True:

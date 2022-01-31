@@ -1,8 +1,10 @@
 import random as rnd
-from hill_climbing_problem.hill_climbing_problem import HillClimbingProblem
+from search_algorithms.simulated_anealing.simulated_anealing_problem import SimulatedAnealingProblem
+from search_algorithms.genetic.genetic_problem import GeneticProblem
+from search_algorithms.hill_climbing.hill_climbing_problem import HillClimbingProblem
 
 
-class NQueens(HillClimbingProblem):
+class NQueens(HillClimbingProblem, SimulatedAnealingProblem, GeneticProblem):
     def __init__(self, n_queens=4):
         self.n_queens = n_queens
 
@@ -19,6 +21,9 @@ class NQueens(HillClimbingProblem):
             # Move queen to a random column
             state.append(rnd.randint(0, self.n_queens-1))
         return state
+
+    def shuffle(self, state):
+        return self.initial_state()
 
     def best_neighbour(self, state):
         """
@@ -55,7 +60,7 @@ class NQueens(HillClimbingProblem):
                         best_neighbours.append(new_state.copy())
 
         # Randomly choose from best neighbours found:
-        return best_neighbours[rnd.randint(0, len(best_neighbours)-1)]
+        return best_neighbours[rnd.randint(0, len(best_neighbours) - 1)]
 
     def random_neighbour(self, state):
         """
@@ -64,12 +69,12 @@ class NQueens(HillClimbingProblem):
         """
         new_state = state.copy()
         # Queen that will be moved (every queen only moves in their row):
-        moving_queen = rnd.randint(0, self.n_queens)
+        moving_queen = rnd.randint(0, self.n_queens - 1)
         # Set new column to the current one (for now):
         new_column = new_state[moving_queen]
         # Loop until a new column is randomly obtained (that's not the current one):
         while new_column == new_state[moving_queen]:
-            new_column = rnd.randint(0, self.n_queens)
+            new_column = rnd.randint(0, self.n_queens - 1)
         # Move queen:
         new_state[moving_queen] = new_column
         return new_state

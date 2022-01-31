@@ -1,9 +1,9 @@
 from problems.nqueens import NQueens
 from problems.travelling_salesman import TravellingSalesman
-from search_algorithms.stochastic_hill_climbing import StochasticHillClimbing
-from search_algorithms.random_start_hill_climbing import RandomStartHillClimbing
-from search_algorithms.simulated_anealing import SimulatedAnealing
-from search_algorithms.genetic import Genetic
+from search_algorithms.hill_climbing.stochastic_hill_climbing import StochasticHillClimbing
+from search_algorithms.hill_climbing.random_start_hill_climbing import RandomStartHillClimbing
+from search_algorithms.simulated_anealing.simulated_anealing import SimulatedAnealing
+from search_algorithms.genetic.genetic import Genetic
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import numpy as np
@@ -62,23 +62,20 @@ def plot_travelling_salesman(initial_state, initial_distance, final_state, final
     plt.show()
 
 
-def nqueens(search, n):
+def nqueens(search, n, ):
     """
     'search': stochastic_hill_climbing, random_start_hill_climbing, simulated_anealing, genetic
     'n': Number of queens and, consequently, number of rows and columns of the board.
     """
+    problem = NQueens(n_queens=n)
     if (search == "stochastic_hill_climbing"):
-        searcher = StochasticHillClimbing(
-            problem=NQueens(n_queens=n), n_iterations_without_change=24)
+        searcher = StochasticHillClimbing(problem=problem, n_iterations_without_change=24)
     elif (search == "random_start_hill_climbing"):
-        searcher = RandomStartHillClimbing(
-            problem=NQueens(n_queens=n), n_iterations_without_change=24)
+        searcher = RandomStartHillClimbing(problem=problem, n_iterations=16, n_iterations_without_change=24)
     elif (search == "simulated_anealing"):
-        searcher = SimulatedAnealing(
-            problem=NQueens(n_queens=n), n_iterations_without_change=24)
+        searcher = SimulatedAnealing(problem=problem)
     elif (search == "genetic"):
-        searcher = Genetic(
-            problem=NQueens(n_queens=n), n_iterations_without_change=24)
+        searcher = Genetic(problem=problem, n_iterations_without_change=24)
     else:
         print("Invalid searcher. Choose from the following:\nstochastic_hill_climbing\nrandom_start_hill_climbing\nsimulated_anealing\ngenetic")
         return
@@ -93,18 +90,15 @@ def travelling_salesman(search, n, size):
     'n': Number of cities
     'size': World size (world is a square)
     """
+    problem = TravellingSalesman(n_cities=n, world_size=size)
     if (search == "stochastic_hill_climbing"):
-        searcher = StochasticHillClimbing(
-            problem=TravellingSalesman(n_cities=n, world_size=size), n_iterations_without_change=24)
+        searcher = StochasticHillClimbing(problem=problem, n_iterations_without_change=24)
     elif (search == "random_start_hill_climbing"):
-        searcher = RandomStartHillClimbing(
-            problem=TravellingSalesman(n_cities=n, world_size=size), n_iterations_without_change=24)
+        searcher = RandomStartHillClimbing(problem=problem, n_iterations=16, n_iterations_without_change=24)
     elif (search == "simulated_anealing"):
-        searcher = SimulatedAnealing(
-            problem=TravellingSalesman(n_cities=n, world_size=size), n_iterations_without_change=24)
+        searcher = SimulatedAnealing(problem=problem)
     elif (search == "genetic"):
-        searcher = Genetic(
-            problem=TravellingSalesman(n_cities=n, world_size=size), n_iterations_without_change=24)
+        searcher = Genetic(problem=problem)
     else:
         print("Invalid searcher. Choose from the following:\nstochastic_hill_climbing\nrandom_start_hill_climbing\nsimulated_anealing\ngenetic")
     searcher.search()
@@ -112,5 +106,9 @@ def travelling_salesman(search, n, size):
                              searcher.final_state, searcher.final_value, )
 
 
-# nqueens(search="stochastic_hill_climbing", n=8)
-travelling_salesman(search="stochastic_hill_climbing", n=8, size=100)
+#nqueens(search="stochastic_hill_climbing", n=8)
+#travelling_salesman(search="stochastic_hill_climbing", n=8, size=100)
+#nqueens(search="random_start_hill_climbing", n=8)
+#travelling_salesman(search="random_start_hill_climbing", n=16, size=100) 
+nqueens(search="simulated_anealing", n=8)
+#travelling_salesman(search="simulated_anealing", n=16, size=100)
