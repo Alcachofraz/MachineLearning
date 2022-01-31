@@ -249,7 +249,7 @@ pygame.display.set_caption('Chords AI')
 font = pygame.font.Font("C:\Windows\Fonts\segoeprb.ttf", 25)
 text = font.render('UNKNOWN', True, BLACK)
 image = pygame.image.load(
-    'IASC_1_A\\notes\\piano.png')
+    'iasc_1\\notes\\piano.png')
 
 pygame.mixer.init()
 pygame.mixer.set_num_channels(NOTES_PER_OCTAVE)  # Number of notes
@@ -301,7 +301,7 @@ while True:
                 if (note >= 0):
                     current_chord[note] = 1
                     channels[note].play(pygame.mixer.Sound(
-                        'IASC_1_A\\notes\\' + str(NOTES[note])))
+                        'iasc_1\\notes\\' + str(NOTES[note])))
 
     if USING_MIDI and input_device.poll():
         event = input_device.read(1)[0]
@@ -313,7 +313,7 @@ while True:
         else:
             current_chord[note] = 1
             channels[note].play(pygame.mixer.Sound(
-                'IASC_1_A\\notes\\' + str(NOTES[note])))
+                'iasc_1\\notes\\' + str(NOTES[note])))
 
     output = list(model.predict([current_chord]).round()[0])
     text = font.render(to_chord(output), True, BLACK)
