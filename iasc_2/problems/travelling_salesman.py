@@ -1,6 +1,6 @@
-from hill_climbing_problem.hill_climbing_problem import HillClimbingProblem
 import random as rnd
 import math
+from hill_climbing_problem.hill_climbing_problem import HillClimbingProblem
 
 
 class TravellingSalesman(HillClimbingProblem):
@@ -63,7 +63,7 @@ class TravellingSalesman(HillClimbingProblem):
                     best_neighbours.append(new_state.copy())
 
         # Randomly choose from best neighbours found:
-        return best_neighbours[rnd.randint(0, len(best_neighbours))]
+        return best_neighbours[rnd.randint(0, len(best_neighbours) - 1)]
 
     def random_neighbour(self, state):
         """
@@ -87,17 +87,17 @@ class TravellingSalesman(HillClimbingProblem):
         distance = 0
         for i in range(self.n_cities):
             distance += self.distance_between_cities(
-                state[i], state[i + 1 if i + 1 >= self.n_cities else 0])
+                state[i], state[0 if i + 1 >= self.n_cities else i + 1])
         return distance
 
-    def swap_cities(cities, c1, c2):
+    def swap_cities(self, cities, c1, c2):
         """
         Swap 'c1' with 'c2' in list cities.
         """
         cities[c1], cities[c2] = cities[c2], cities[c1]
         return cities
 
-    def distance_between_cities(c1, c2):
+    def distance_between_cities(self, c1, c2):
         """
         Calculate distance between 'c1' and 'c2'.
         """

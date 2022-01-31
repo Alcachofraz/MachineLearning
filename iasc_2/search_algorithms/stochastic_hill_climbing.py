@@ -2,9 +2,6 @@ from search_algorithms.search_algorithm import SearchAlgorithm
 
 
 class StochasticHillClimbing(SearchAlgorithm):
-    final_state = None
-    final_value = None
-
     """
     'problem': Problem. Should extend 'HillClimbingProblem'
     'n_iterations_without_change': Number of successive iterations with
@@ -19,6 +16,8 @@ class StochasticHillClimbing(SearchAlgorithm):
         current_state = None
         current_value = None
         previous_state = self.problem.initial_state()
+        self.initial_state = previous_state
+        self.initial_value = self.problem.value(self.initial_state)
         iterations_without_change = 0
 
         while True:
