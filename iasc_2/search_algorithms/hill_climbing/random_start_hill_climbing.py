@@ -15,20 +15,23 @@ class RandomStartHillClimbing(SearchAlgorithm):
         self.n_iterations = n_iterations
 
     def search(self):
-        searcher = StochasticHillClimbing(self.problem, n_iterations_without_change=self.n_iterations_without_change)
+        searcher = StochasticHillClimbing(
+            self.problem, n_iterations_without_change=self.n_iterations_without_change)
         searcher.search()
         self.initial_state = searcher.initial_state
         self.initial_value = searcher.initial_value
         best_state = searcher.final_state
         best_value = searcher.final_value
 
-        for _ in range(self.n_iterations):
-            searcher.initial_state = self.problem.shuffle(searcher.initial_state)
+        for iteration in range(self.n_iterations):
+            searcher.initial_state = self.problem.shuffle(
+                searcher.initial_state)
             searcher.search()
             new_state = searcher.final_state
             new_value = searcher.final_value
 
-            print(new_value)
+            print('Iteration %s > state: %s, value: %.2f' %
+                  (str(iteration).zfill(len(str(self.n_iterations))), new_state, new_value))
 
             if new_value < best_value:
                 best_state = new_state.copy()

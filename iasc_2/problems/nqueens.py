@@ -1,7 +1,10 @@
 import random as rnd
+
+from matplotlib import colors
 from search_algorithms.simulated_anealing.simulated_anealing_problem import SimulatedAnealingProblem
 from search_algorithms.genetic.genetic_problem import GeneticProblem
 from search_algorithms.hill_climbing.hill_climbing_problem import HillClimbingProblem
+import matplotlib.pyplot as plt
 
 
 class NQueens(HillClimbingProblem, SimulatedAnealingProblem, GeneticProblem):
@@ -95,3 +98,29 @@ class NQueens(HillClimbingProblem, SimulatedAnealingProblem, GeneticProblem):
 
         # Return collisions:
         return collisions
+
+    def plot(self, algorithm, initial_state, initial_collisions, final_state, final_collisions):
+        # Add 1 to all elements:
+        initial_state = initial_state[:] = [
+            number + 1 for number in initial_state]
+        final_state = final_state[:] = [
+            number + 1 for number in final_state]
+
+        # Build boards:
+        initial_board = [[1 if j + 1 == initial_state[i]
+                          else 0 for j in range(len(initial_state))] for i in range(len(initial_state))]
+        final_board = [[1 if j + 1 == final_state[i]
+                        else 0 for j in range(len(final_state))] for i in range(len(final_state))]
+
+        # Plots:
+        fig, ax = plt.subplots(nrows=1, ncols=2)
+        fig.canvas.manager.set_window_title("Nqueens (" + algorithm + ")")
+        ax[0].set_title(str(initial_collisions) + " Collisions!")
+        ax[1].set_title(str(final_collisions) + " Collisions!")
+        ax[0].imshow(initial_board, cmap=colors.ListedColormap(
+            ['black', 'white']))
+        ax[1].imshow(final_board, cmap=colors.ListedColormap(
+            ['black', 'white']))
+        ax[0].axis(False)
+        ax[1].axis(False)
+        plt.show()

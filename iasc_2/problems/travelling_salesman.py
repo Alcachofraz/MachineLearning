@@ -1,9 +1,12 @@
 import random as rnd
 import math
+from search_algorithms.simulated_anealing.simulated_anealing_problem import SimulatedAnealingProblem
+from search_algorithms.genetic.genetic_problem import GeneticProblem
 from search_algorithms.hill_climbing.hill_climbing_problem import HillClimbingProblem
+import matplotlib.pyplot as plt
 
 
-class TravellingSalesman(HillClimbingProblem):
+class TravellingSalesman(HillClimbingProblem, SimulatedAnealingProblem, GeneticProblem):
     def __init__(self, n_cities=16, world_size=128):
         """
         'world_size': World size (both vertically and horizontally).
@@ -84,6 +87,31 @@ class TravellingSalesman(HillClimbingProblem):
 
         # Return state with swapped cities:
         return self.swap_cities(state.copy(), c1, c2)
+
+    def plot(self, algorithm, initial_state, initial_distance, final_state, final_distance):
+        # Append first city to the end, so salesman ends where he started:
+        initial_state.append(initial_state[0])
+        final_state.append(final_state[0])
+        # initial_state = np.reshape(initial_state, (length + 1, 2))
+        # final_state = np.reshape(final_state, (length + 1, 2))
+
+        # Plot:
+        fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 6))
+        fig.canvas.manager.set_window_title(
+            "Travelling Salesman (" + algorithm + ")")
+        ax[0].set_box_aspect(1)
+        ax[1].set_box_aspect(1)
+        ax[0].set_title(str(round(initial_distance, 1)) + " kms traveled!")
+        ax[1].set_title(str(round(final_distance, 1)) + " kms traveled!")
+        ax[0].plot(*zip(*initial_state), 'bo-')
+        ax[1].plot(*zip(*final_state), 'bo-')
+        for i in range(len(initial_state)-1):
+            ax[0].annotate(f'  {i+1}', (initial_state[i]
+                           [0], initial_state[i][1]))
+        for i in range(len(final_state)-1):
+            ax[1].annotate(f'  {i+1}', (final_state[i][0], final_state[i][1]))
+
+        plt.show()
 
     def value(self, state):
         """
