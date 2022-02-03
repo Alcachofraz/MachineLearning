@@ -9,6 +9,7 @@ regr = MLPRegressor(hidden_layer_sizes=(4, 2),
                     activation='tanh',
                     solver='adam',
                     max_iter=10000,
+                    n_iter_no_change=100,
                     verbose=False)
 
 model = regr.fit(X, Y)

@@ -48,7 +48,7 @@ class TravellingSalesman(HillClimbingProblem, SimulatedAnealingProblem, GeneticP
         minimum total distance traveled.\n Returns the new state.
         """
         # Ridiculously large value:
-        best_value = self.world_size*self.world_size*self.n_cities
+        best_value = self.world_size*self.world_size*self.n_cities*-1
         # List that will contain all best neighbours:
         best_neighbours = []
 
@@ -60,7 +60,7 @@ class TravellingSalesman(HillClimbingProblem, SimulatedAnealingProblem, GeneticP
                 new_state = self.swap_cities(state.copy(), i, j)
                 # Get value of state with swapped cities:
                 new_value = self.value(new_state)
-                if new_value < best_value:
+                if new_value > best_value:
                     # A new best value was found:
                     best_value = new_value
                     # Clear best neighbours, and append this one:
@@ -88,6 +88,47 @@ class TravellingSalesman(HillClimbingProblem, SimulatedAnealingProblem, GeneticP
         # Return state with swapped cities:
         return self.swap_cities(state.copy(), c1, c2)
 
+    def value(self, state):
+        """
+        Takes a 'state' and returns the total distance traveled.
+        """
+        distance = 0
+        for i in range(self.n_cities):
+            distance += self.distance_between_cities(
+                state[i], state[0 if i + 1 >= self.n_cities else i + 1])
+        return distance*-1
+
+    def population(self, size):
+        population = []
+        state = self.initial_state()
+        for _ in range(size):
+            rnd.shuffle(state)
+            population.append(state.copy())
+        return population
+
+    def crossover(self, element1, element2):
+        crossover_point = rnd.randint(
+            1, self.n_cities-2)
+        new_gene = element1[:crossover_point]
+        for gene in element2:
+            if gene not in new_gene:  # Prevent duplicates
+                new_gene.append(gene)
+        return new_gene
+
+    def mutate(self, element):
+        # Swap two chromosomes
+        new_gene = element.copy()
+        i = rnd.randint(0, self.n_cities - 1)
+        j = rnd.randint(0, self.n_cities - 1)
+        while j == i:
+            j = rnd.randint(0, self.n_cities - 1)
+        new_gene[i], new_gene[j] = new_gene[j], new_gene[i]
+        return new_gene
+
+    def fitness(self, element):
+        print(element)
+        return math.exp(self.value(element)*(2/(self.n_cities*self.world_size)))
+
     def plot(self, algorithm, initial_state, initial_distance, final_state, final_distance):
         # Append first city to the end, so salesman ends where he started:
         initial_state.append(initial_state[0])
@@ -101,8 +142,9 @@ class TravellingSalesman(HillClimbingProblem, SimulatedAnealingProblem, GeneticP
             "Travelling Salesman (" + algorithm + ")")
         ax[0].set_box_aspect(1)
         ax[1].set_box_aspect(1)
-        ax[0].set_title(str(round(initial_distance, 1)) + " kms traveled!")
-        ax[1].set_title(str(round(final_distance, 1)) + " kms traveled!")
+        ax[0].set_title(
+            str(round(abs(initial_distance), 1)) + " kms traveled!")
+        ax[1].set_title(str(round(abs(final_distance), 1)) + " kms traveled!")
         ax[0].plot(*zip(*initial_state), 'bo-')
         ax[1].plot(*zip(*final_state), 'bo-')
         for i in range(len(initial_state)-1):
@@ -112,16 +154,6 @@ class TravellingSalesman(HillClimbingProblem, SimulatedAnealingProblem, GeneticP
             ax[1].annotate(f'  {i+1}', (final_state[i][0], final_state[i][1]))
 
         plt.show()
-
-    def value(self, state):
-        """
-        Takes a 'state' and returns the total distance traveled.
-        """
-        distance = 0
-        for i in range(self.n_cities):
-            distance += self.distance_between_cities(
-                state[i], state[0 if i + 1 >= self.n_cities else i + 1])
-        return distance
 
     def swap_cities(self, cities, c1, c2):
         """

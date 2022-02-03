@@ -2,7 +2,7 @@ class HillClimbingProblem:
     def initial_state(self):
         """Initial state of the problem."""
         pass
-    
+
     def shuffle(self):
         """Shuffle state."""
         pass
@@ -13,4 +13,7 @@ class HillClimbingProblem:
 
     def value(self):
         """Get value of specified state."""
+        pass
+
+    def plot():
         pass

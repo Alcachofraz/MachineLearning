@@ -10,3 +10,6 @@ class SimulatedAnealingProblem:
     def value(self):
         """Get value of 'state'."""
         pass
+
+    def plot():
+        pass

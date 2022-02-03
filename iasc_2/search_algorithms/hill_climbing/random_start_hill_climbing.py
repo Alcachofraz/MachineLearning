@@ -1,5 +1,6 @@
 from search_algorithms.hill_climbing.stochastic_hill_climbing import StochasticHillClimbing
 from search_algorithms.search_algorithm import SearchAlgorithm
+import random as rnd
 
 
 class RandomStartHillClimbing(SearchAlgorithm):
@@ -24,8 +25,7 @@ class RandomStartHillClimbing(SearchAlgorithm):
         best_value = searcher.final_value
 
         for iteration in range(self.n_iterations):
-            searcher.initial_state = self.problem.shuffle(
-                searcher.initial_state)
+            rnd.shuffle(searcher.initial_state)
             searcher.search()
             new_state = searcher.final_state
             new_value = searcher.final_value
@@ -33,7 +33,7 @@ class RandomStartHillClimbing(SearchAlgorithm):
             print('Iteration %s > state: %s, value: %.2f' %
                   (str(iteration).zfill(len(str(self.n_iterations))), new_state, new_value))
 
-            if new_value < best_value:
+            if new_value > best_value:
                 best_state = new_state.copy()
                 best_value = new_value
 

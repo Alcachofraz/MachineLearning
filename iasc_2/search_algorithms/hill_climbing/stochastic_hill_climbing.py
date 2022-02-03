@@ -34,7 +34,7 @@ class StochasticHillClimbing(SearchAlgorithm):
             else:
                 iterations_without_change = 0
 
-            if previous_value < current_value or iterations_without_change > self.n_iterations_without_change:
+            if previous_value > current_value or iterations_without_change > self.n_iterations_without_change:
                 self.final_state = previous_state
                 self.final_value = previous_value
                 return
