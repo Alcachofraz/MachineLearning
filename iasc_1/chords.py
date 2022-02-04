@@ -58,10 +58,12 @@ Saída:
 
 USING_MIDI = None
 
-HIDDEN_LAYERS = (1024, 512)
+HIDDEN_LAYERS = (128, 64)
 ACTIVATION = 'relu'
-SOLVER = 'adam'
+SOLVER = 'sgd'
 VERBOSE = False
+LEARNING_RATE = 0.05
+MOMENTUM = 0.5
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -204,10 +206,18 @@ regr = MLPRegressor(
     activation=ACTIVATION,
     solver=SOLVER,
     verbose=VERBOSE,
+    learning_rate_init=LEARNING_RATE,
+    momentum=MOMENTUM
 )
 model = regr.fit(X, Y)
 
 print('Model is ready!')
+
+plt.xlabel("Iterations")
+plt.ylabel("Loss")
+plt.axhline(y=0.1, color='r', linestyle='-')
+plt.plot(model.loss_curve_)
+plt.show()
 
 
 """

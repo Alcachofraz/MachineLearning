@@ -17,14 +17,16 @@ B = np.array([1, 0, 0, 1,
               0, 1, 1, 0,
               1, 0, 0, 1])
 
+
 def random_pattern(length):
     return [[rnd.randint(0, 1) for i in range(length)]]
+
 
 X = np.concatenate(([A]*FORCED_DATA_LENGTH, [B]*FORCED_DATA_LENGTH))
 Y = np.array([], dtype=int)
 
 for i in range(RANDOM_DATA_LENGTH):
-    X = np.append(X, random_pattern(16), axis = 0)
+    X = np.append(X, random_pattern(16), axis=0)
 
 np.random.shuffle(X)
 
@@ -39,13 +41,20 @@ for i in range(TOTAL_DATA_LENGTH):
 Y = np.reshape(Y, (TOTAL_DATA_LENGTH, 2))
 
 regr = MLPRegressor(hidden_layer_sizes=(16, 8),
-    activation = 'tanh',
-    solver = 'adam',
-    max_iter = 10000,
-    verbose = False)
+                    activation='relu',
+                    solver='sgd',
+                    max_iter=10000,
+                    verbose=False,
+                    momentum=0.5)
 
 model = regr.fit(X, Y)
 
 TEST = np.concatenate(([A], [B], random_pattern(16)))
-print(TEST)
-print(model.predict(TEST).round())
+print('Test:\n' + str(TEST))
+print('Predictions:\n' + str(model.predict(TEST).round()))
+
+plt.xlabel("Iterations")
+plt.ylabel("Loss")
+plt.axhline(y=0.1, color='r', linestyle='-')
+plt.plot(model.loss_curve_)
+plt.show()

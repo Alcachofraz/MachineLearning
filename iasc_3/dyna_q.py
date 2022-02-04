@@ -1,39 +1,41 @@
 from e_greedy import *
-from modelo_tr import *
+from model_tr import *
 
 
-class AprendRef:
-    def __init__(self, mem_aprend: MemoriaAprend, sel_acao: SelAcao, alfa: float, gama: float):
-        self.mem_aprend = mem_aprend
-        self.sel_acao = sel_acao
-        self.alfa = alfa
+class ReinforcedLearning:
+    def __init__(self, memory: LearnMemory, action_selection: ActionSelection, alpha: float, gama: float):
+        self.memory = memory
+        self.action_selection = action_selection
+        self.alpha = alpha
         self.gama = gama
 
-    def aprender(s: Estado, a: Acao, r: float, sn: Estado, an: Acao = None):
-        raise NotImplementedError
+    def learn(state: State, action: Action, r: float, next_state: State, next_action: Action = None):
+        pass
 
 
-class QLearning(AprendRef):
-    def aprender(self, s: Estado, a: Acao, r: float, sn: Estado):  # , an: Acao = None
-        an = self.sel_acao.max_acao(sn)
-        qsa = self.mem_aprend.Q(s, a)
-        qsnan = self.mem_aprend.Q(sn, an)
-        q = qsa + self.alfa * (r + self.gama * qsnan - qsa)
-        self.mem_aprend.atualizar(s, a, q)
+class QLearning(ReinforcedLearning):
+    def learn(self, state: State, action: Action, r: float, next_state: State):
+        next_action = self.action_selection.max_action(next_state)
+        q_state_action = self.memory.Q(state, action)
+        q_nest_state_next_action = self.memory.Q(
+            next_state, next_action)
+        q = q_state_action + self.alpha * \
+            (r + self.gama * q_nest_state_next_action - q_state_action)
+        self.memory.update(state, action, q)
 
 
 class DynaQ(QLearning):
-    def __init__(self, mem_aprend: MemoriaAprend, sel_acao: SelAcao, alfa: float, gama: float, num_sim: int):
-        super().__init__(mem_aprend, sel_acao, alfa, gama)
-        self.num_sim = num_sim
-        self.modelo = ModeloTR()
+    def __init__(self, memory: LearnMemory, action_selection: ActionSelection, alpha: float, gama: float, sim_num: int):
+        super().__init__(memory, action_selection, alpha, gama)
+        self.sim_num = sim_num
+        self.model = ModelTR()
 
-    def simular(self):
-        for i in range(self.num_sim):
-            s, a, r, sn = self.modelo.amostrar()
-            super().aprender(s, a, r, sn)
+    def simulate(self):
+        for i in range(self.sim_num):
+            state, action, r, next_state = self.model.sample()
+            super().learn(state, action, r, next_state)
 
-    def aprender(self, s: Estado, a: Acao, r: float, sn: Estado):
-        super().aprender(s, a, r, sn)  # d)
-        self.modelo.atualizar(s, a, r, sn)  # e)
-        self.simular()  # f)
+    def learn(self, state: State, action: Action, r: float, next_state: State):
+        super().learn(state, action, r, next_state)
+        self.model.update(state, action, r, next_state)
+        self.simulate()

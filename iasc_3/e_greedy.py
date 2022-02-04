@@ -1,30 +1,30 @@
 import random as rnd
-from memoria_esparsa import *
+from sparse_memory import *
 
 
-class SelAcao:
-    def selecionar_acao(self, s: Estado) -> Acao:
-        raise NotImplementedError
+class ActionSelection:
+    def select_action(self, state: State) -> Action:
+        pass
 
 
-class EGreedy(SelAcao):
-    def __init__(self, mem_aprend: MemoriaAprend, acoes: list, epsilon: float):
-        self.mem_aprend = mem_aprend
-        self.acoes = acoes
+class EGreedy(ActionSelection):
+    def __init__(self, memory: LearnMemory, actions: list, epsilon: float):
+        self.memory = memory
+        self.actions = actions
         self.epsilon = epsilon
 
-    def max_acao(self, s: Estado) -> Acao:
-        rnd.shuffle(self.acoes)
-        return max(self.acoes, key=lambda a: self.mem_aprend.Q(s, a))
+    def max_action(self, state: State) -> Action:
+        rnd.shuffle(self.actions)
+        return max(self.actions, key=lambda a: self.memory.Q(state, a))
 
-    def aproveitar(self, s: Estado) -> Acao:
-        return self.max_acao(s)
+    def benefit(self, state: State) -> Action:
+        return self.max_action(state)
 
-    def explorar(self) -> Acao:
-        return self.acoes[rnd.randint(0, len(self.acoes) - 1)]
+    def explore(self) -> Action:
+        return self.actions[rnd.randint(0, len(self.actions) - 1)]
 
-    def selecionar_acao(self, s: Estado) -> Acao:
+    def select_action(self, state: State) -> Action:
         if rnd.random() > self.epsilon:
-            return self.aproveitar(s)
+            return self.benefit(state)
         else:
-            return self.explorar()
+            return self.explore()
