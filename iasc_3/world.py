@@ -6,13 +6,13 @@ from state_action import *
 class World:
     def __init__(self, file_name: str, multiplier: float = 10, move_cost: float = 0.01, algorithm_name="Unknown"):
         self.file_name = file_name
-        self.world, self.state, self.target = self.load(file_name)
+        self.world, self.state, self.target = self.load()
         self.multiplier = multiplier
         self.move_cost = move_cost
         self.movements = 0
         self.turn = 1
         # Create plot with world:
-        plt.imshow([[x for x in y] for y in self.world])
+        self.plot = plt.imshow([[x for x in y] for y in self.world])
         plt.tick_params(axis='x', which='both', bottom=False,
                         top=False, labelbottom=False)
         plt.tick_params(axis='y', which='both', right=False,
@@ -49,7 +49,7 @@ class World:
     def regenerate(self):
         self.movements = 0
         self.turn += 1
-        self.world, self.state, self.target = self.load(self.file_name)
+        self.world, self.state, self.target = self.load()
 
     def current_state(self) -> State:
         return self.state
@@ -85,6 +85,6 @@ class World:
         plt.title("Turn: " + str(self.turn) +
                   "\nSteps: " + str(self.movements))
         # Update map plot:
-        self.map.set_data(position)
+        self.plot.set_data(position)
         plt.draw()
         plt.pause(0.001)

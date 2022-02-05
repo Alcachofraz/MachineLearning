@@ -61,14 +61,14 @@ def search_builtin(problem, n_generations=100, allow_duplicate_genes=True, gene_
 
 
 #search(algorithm="stochastic_hill_climbing", problem=NQueens(n_queens=8), n_iterations_without_change=24)
-#search(algorithm="stochastic_hill_climbing", problem=TravellingSalesman(n_cities=16, world_size=100), n_iterations_without_change=24)
-#search(algorithm="random_start_hill_climbing", problem=NQueens(n_queens=8), n_iterations=16, n_iterations_without_change=24)
-#search(algorithm="random_start_hill_climbing", problem=TravellingSalesman(n_cities=16, world_size=100), n_iterations=16, n_iterations_without_change=24)
-#search(algorithm="simulated_anealing", problem=NQueens(n_queens=8), n_iterations=100)
-#search(algorithm="simulated_anealing", problem=TravellingSalesman(n_cities=16, world_size=100), n_iterations=16)
-search(algorithm="genetic", problem=NQueens(n_queens=8),
-       n_iterations=48, population_size=100, mutation_rate=0.1)
-#search(algorithm="genetic", problem=TravellingSalesman(n_cities=5, world_size=100), n_iterations=48, n_genes=48, mutation_rate=0.1)
+#search(algorithm="stochastic_hill_climbing", problem=TravellingSalesman(n_cities=64, world_size=100), n_iterations_without_change=24)
+#search(algorithm="random_start_hill_climbing", problem=NQueens(n_queens=32), n_iterations=16, n_iterations_without_change=24)
+#search(algorithm="random_start_hill_climbing", problem=TravellingSalesman(n_cities=64, world_size=100), n_iterations=16, n_iterations_without_change=24)
+#search(algorithm="simulated_anealing", problem=NQueens(n_queens=32), n_iterations=100)
+#search(algorithm="simulated_anealing", problem=TravellingSalesman(n_cities=64, world_size=100), n_iterations=16)
+#search(algorithm="genetic", problem=NQueens(n_queens=32), n_iterations=48, population_size=100, mutation_rate=0.1)
+search(algorithm="genetic", problem=TravellingSalesman(
+    n_cities=8, world_size=100), n_iterations=48, population_size=48, mutation_rate=0.1)
 
 #search_builtin(problem=NQueens(n_queens=16), n_generations=200, allow_duplicate_genes=False, gene_type=int, population_size=200)
 # Para o travelling salesman não funciona porque a biblioteca só aceita doubles ou integers. Ter-se-ia de alterar complemamente o

@@ -17,7 +17,7 @@ class EGreedy(ActionSelection):
         rnd.shuffle(self.actions)
         return max(self.actions, key=lambda a: self.memory.Q(state, a))
 
-    def benefit(self, state: State) -> Action:
+    def exploit(self, state: State) -> Action:
         return self.max_action(state)
 
     def explore(self) -> Action:
@@ -25,6 +25,6 @@ class EGreedy(ActionSelection):
 
     def select_action(self, state: State) -> Action:
         if rnd.random() > self.epsilon:
-            return self.benefit(state)
+            return self.exploit(state)
         else:
             return self.explore()

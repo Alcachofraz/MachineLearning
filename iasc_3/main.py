@@ -15,7 +15,7 @@ actions = [
 agent = WavefrontAgent(actions=actions)
 
 # Create world:
-world = World("iasc_3/worlds/world1.txt", algorithm_name=type(agent).__name__)
+world = World("iasc_3/worlds/world2.txt", algorithm_name=type(agent).__name__)
 
 # Process challenge:
 agent.process(world)

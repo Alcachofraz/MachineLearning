@@ -126,7 +126,6 @@ class TravellingSalesman(HillClimbingProblem, SimulatedAnealingProblem, GeneticP
         return new_gene
 
     def fitness(self, element):
-        print(element)
         return math.exp(self.value(element)*(2/(self.n_cities*self.world_size)))
 
     def plot(self, algorithm, initial_state, initial_distance, final_state, final_distance):
