@@ -164,9 +164,9 @@ Relativamente ao problema do **Travelling Salesman**, eis os resultados obtidos.
 
 Na primeira figura, verifica-se claramente, a olho nu, pela primeira vez, que não foi obtida a solução ideal. Contudo, para **64** cidades, o desempenho é semelhante ao **HillClimbing**.
 
-Admitindo um máximo de gerações igual a **48** e um número de cromossomas por população igual a **100**, estes são os resultados obtidos quando se aplica o algoritmo genético ao problema **NQueens**.
-
 ### Algoritmo Genético
+
+Admitindo um máximo de gerações igual a **48** e um número de cromossomas por população igual a **100**, estes são os resultados obtidos quando se aplica o algoritmo genético ao problema **NQueens**.
 
 8 rainhas   |  32 rainhas
 :-------------------------:|:-------------------------:
