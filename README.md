@@ -86,4 +86,128 @@ Nenhum acorde a ser tocado   |  Dó maior  |  Si maior
 :-------------------------:|:-------------------------:|:-------------------------:
 ![](https://user-images.githubusercontent.com/75852333/154866145-7ed7756e-3080-478b-a69c-a670f159e3ce.png)  |  ![](https://user-images.githubusercontent.com/75852333/154866234-964dc4b4-ee7e-4365-9fa6-045d899c638e.png)  |  ![](https://user-images.githubusercontent.com/75852333/154866238-89f582b6-b610-4ca6-9616-ba732e5407ad.png)
 
+Um facto curioso é que na figura da direita, as únicas notas que estão a ser premidas são Ré Sustenido e Fá Sustenido, ou seja, a tecla 3 e a tecla 5. Ora, um acorde precisa de pelo menos três notas para que se justifique, mas o modelo assumiu que não é esse o caso, e tomou a decisão (errada, mas não deixa de ser razoável e interessante) de identificar o acorde Si, apesar de faltar a tónica (o próprio Si). Esta decisão é errada porque, com base nestas duas notas, haveria outro acorde possível. O acorde Ré Sustenido Menor conta com as seguintes notas: Ré Sustenido como tónica, Fá Sustenido como terceira e Lá Sustenido como quinta.
 
+## NQueens
+
+Este problema constitui um tabuleiro **n x n** pelo qual se deslocarão **n** rainhas. Inicialmente, as rainhas estarão aleatoriamente distribuídas pelo tabuleiro, garantindo-se apenas que há uma e apenas uma em cada linha. Para resolver o problema, as rainhas deverão deslocar-se pela tabuleiro (neste caso, deslocam-se apenas pela sua linha) de forma a atingir zero colisões. Uma rainha está em colisão com outra se for possível traçar uma reta na horizontal, vertical ou diagonal (**45º**) entre elas. A figura ilustra um tabuleiro com **8** rainhas (e por isso, com uma dimensão de **8 x 8**), com zero colisões.  
+  
+Na implementação deste problema, será necessário um método para detectar o número de colisões no tabuleiro e um para gerar um tabuleiro aleatório. O problema será representado por uma lista com dimensão **n**, em que cada posição representa a coluna de cada rainha. Por exemplo, no caso da disposição da figura, o conjunto seria: **[2, 5, 3, 1, 7, 6, 4, 0]**.
+
+## Travelling Salesman
+
+Este problema é representado por um espaço bidimensional, de comprimento igual à largura (tal como no problema **NQueens**), no qual se apontarão **n** cidades. Cada cidade conta com uma coordenada **x** e uma coordenada **y**. Por outras palavras, este problemas constitui um conjunto de cidades (tuplos de coordenadas) em que a ordem é relevante, pois será a ordem pela qual o **Travelling Salesman** visitará as cidades. Contudo, ele pretende percorrer a menor distância possível, pelo que, na resolução do problema, ter-se-á de alterar a ordem das cidades, mas nunca os valores das coordenadas das cidades.
+
+## Implementação do NQueens e do Travelling Salesman
+
+Para implementar o problema do **NQueens** e o problema do **Travelling-Salesman**, e forma a que seja possível aplicar várias técnicas de otimização diferentes, é necessária uma abordagem estruturada e metódica. Observe-se o diagrama de classes da figura seguinte.  
+  
+![image](https://user-images.githubusercontent.com/75852333/154866365-064f010b-8a4c-4be3-a67c-28cb0b4dead5.png)
+
+Ambos os problemas implementam as interfaces **HillClimbingProblem**, **SimulatedAnelingProblem** e **GeneticProblem**. Esta abordagem garante que tanto o **NQueens** como o **Travelling-Salesman**, apresentarão os métodos necessários para que sejam aplicadas as três técnicas de otimização.  
+  
+As classes que implementam **SearchAlgorithm** deverão ser capazes de aceitar um problema de um determinado tipo, e após a pesquisa, armazenar o estado final em memória, para que seja analisado.  
+
+### Stochastic HillClimbing
+  
+Ao aplicar o **Stochastic HillClimbing** no problema das NQueens, obtêm-se os seguintes resultados:  
+  
+8 rainhas   |  32 rainhas
+:-------------------------:|:-------------------------:
+![image](https://user-images.githubusercontent.com/75852333/154866420-d202753c-f47f-403d-9356-313675f950d9.png) | ![image](https://user-images.githubusercontent.com/75852333/154866425-3955c6a9-15b5-43d0-b9fe-c5bd73c9f596.png)
+
+Verificam-se os resultados ideais, apesar de, para dimensões maiores (como as da figura da direita, com **32** rainhas), seja mais demorado.  
+  
+Por sua vez, o problema do **Travelling Salesman** apresenta os seguintes resultados:  
+  
+16 cidades  |  64 cidades
+:-------------------------:|:-------------------------:
+![image](https://user-images.githubusercontent.com/75852333/154866473-3645ed7e-69fb-4b28-aa75-ba97726e7019.png) | ![image](https://user-images.githubusercontent.com/75852333/154866479-9f220203-9811-4cdc-b9b1-afc5d615ebdf.png)
+
+No primeiro caso, a solução parece ser a ideal. No segundo caso, com **64** cidades, a solução já não é a ideal, mas é aceitável.  
+  
+### Random Start HillClimbing
+  
+Aplicando o **Random Start HillClimbing** ao problema das NQueens, obtêm-se os seguintes resultados:  
+  
+8 rainhas   |  32 rainhas
+:-------------------------:|:-------------------------:
+![image](https://user-images.githubusercontent.com/75852333/154866511-0e51c7a6-9cd0-4859-9c0a-537165662117.png) | ![image](https://user-images.githubusercontent.com/75852333/154866515-e426761b-722a-416b-82b4-f67972148ced.png)
+
+Observa-se que, tal como o **Stochastic HillClimbing**, foi capaz de resolver o problema para dimensões elevadas.  
+  
+Vejamos se o **Random Start HillClimbing** é capaz de obter uma solução mais apelativa para dimensões grandes do **Travelling Salesman**.
+
+16 cidades  |  64 cidades
+:-------------------------:|:-------------------------:
+![image](https://user-images.githubusercontent.com/75852333/154866527-d4d9542e-9061-4087-a546-f40465a30a64.png) | ![image](https://user-images.githubusercontent.com/75852333/154866533-61a23ace-5c17-49cd-9c3e-d879f2e3c2d9.png)
+
+Quando o número de cidades aumenta demasiado, torna-se complicado concluir a olho nu se a solução é ideal ou não, mas parece que mesmo o **Random Start HillClimbing** não foi capaz de resolver o problema com a melhor solução possível.
+
+### Simulated Anealing
+
+Aplicando o algoritmo de **Simulated Anealing** ao problema das **NQueens**, obtêm-se os seguintes resultados.
+
+8 rainhas   |  32 rainhas
+:-------------------------:|:-------------------------:
+![image](https://user-images.githubusercontent.com/75852333/154866604-a9af74c1-d778-4bd0-be8b-f60ba40fec0c.png) | ![image](https://user-images.githubusercontent.com/75852333/154866606-c3bdf371-5ffa-4ac7-b069-597b3b45037a.png)
+
+Para grandes dimensões (figura da direita), o algoritmo **Simulated Anealing** portou-se particularmente bem, e demorou muito menos tempo que o **HillClimbing**. Atingiu o valor ideal na iteração **23145**.
+
+![image](https://user-images.githubusercontent.com/75852333/154866626-ec51ce59-ac58-4be9-b393-33965eb5c0df.png)
+
+Relativamente ao problema do **Travelling Salesman**, eis os resultados obtidos.
+
+16 cidades  |  64 cidades
+:-------------------------:|:-------------------------:
+![image](https://user-images.githubusercontent.com/75852333/154866645-052e1455-3496-4eb2-8111-ab9e8a1f528c.png) | ![image](https://user-images.githubusercontent.com/75852333/154866647-982c7608-b950-4ee9-88ad-eb25e5419700.png)
+
+Na primeira figura, verifica-se claramente, a olho nu, pela primeira vez, que não foi obtida a solução ideal. Contudo, para **64** cidades, o desempenho é semelhante ao **HillClimbing**.
+
+Admitindo um máximo de gerações igual a **48** e um número de cromossomas por população igual a **100**, estes são os resultados obtidos quando se aplica o algoritmo genético ao problema **NQueens**.
+
+### Algoritmo Genético
+
+8 rainhas   |  32 rainhas
+:-------------------------:|:-------------------------:
+![image](https://user-images.githubusercontent.com/75852333/154866684-44176ab0-15cb-4f33-b695-cb0d21339ffd.png) | ![image](https://user-images.githubusercontent.com/75852333/154866687-110edb5b-e8e7-4ac3-8e8d-d4c920802c0e.png)
+
+Verifica-se que para um problema com grandes dimensões, o algoritmo genético não tem a capacidade de o resolver, demorando imenso tempo, e ficando ainda bastante longe da solução ideal.  
+  
+Vejamos como se sai, quando aplicado ao problema do **Travelling Salesman**.
+
+16 cidades  |  64 cidades
+:-------------------------:|:-------------------------:
+![image](https://user-images.githubusercontent.com/75852333/154866705-2a3bc6e6-d0d9-46cf-bcd1-2739027cbb72.png) | ![image](https://user-images.githubusercontent.com/75852333/154866708-2af9eb7a-1342-42f9-af95-5a3e7e6ea8be.png)
+
+Nem para 8 cidades foi capaz de encontrar a solução ideal, e muito menos para 64 cidades. O algoritmo genético implementado tem um péssimo desempenho para problemas com grandes dimensões.
+
+## Navegação até um Alvo
+
+Este problema procurará levar o quadrado verde (o quadrado mais à esquerda) até ao quadrado amarelo (mais à esquerda), utilizando técnicas de aprendizagem por reforço e raciocínio automático para planeamento.  
+  
+Obviamente, a capacidade do agente de realizar esse feito deverá ser independente do ambiente, isto é do local onde inicia, da localização do alvo (amarelo), dos obstáculos (desde que haja um caminho possível) e até da dimensão do mapa. Na figura está exemplificado um dos ambientes que serão utilizados na implementação deste problema. Note-se que os obstáculos estão pintados a roxo.
+
+![image](https://user-images.githubusercontent.com/75852333/154866797-66b08a83-6b11-4283-956c-078270852461.png)
+
+Como se pretende explorar diferentes algoritmos e diferentes ambientes, dever-se-á abordar este problema de forma metódica e estruturada. Assim, foi desenvolvido o seguinte diagrama de classes:
+
+![image](https://user-images.githubusercontent.com/75852333/154866812-fa0ba308-7e89-4a46-9ad5-a879a5af0d96.png)
+
+Note-se que o programa principal (**Main**) estará abstraído da maior parte das classes, tendo apenas de saber que mundo (**World**) inicializar e que agente (**Agent**) utilizar. Os dois algoritmos a explorar são o **DynaQ** e o **Wavefront**. Serão devidamente estudados, analisados e testados em capítulos subsequentes.
+
+### Wavefront
+
+As seguintes figuras representam o caminho decidido pelo algoritmo **Wavefront**, em que a figura da esquerda ilustra o mundo **“world1”** e a figura da direita ilustra o mundo **“world2”**. Note-se também que, para valores mais elevados (para estados mais próximos do alvo), a cor torna-se mais clara (um verde mais fluorescente), criando um efeito de gradiente.
+
+Mundo 1  |  Mundo 2
+:-------------------------:|:-------------------------:
+![image](https://user-images.githubusercontent.com/75852333/154866874-77722d95-6f6f-4a34-ae79-d2e3b1b72b61.png) | ![image](https://user-images.githubusercontent.com/75852333/154866877-3cbf50aa-fcf0-47cd-a358-899ea601ae59.png)
+
+### DynaQ
+
+Ao executar o agente, obtêm-se os seguintes resultados:
+
+Mundo 1  |  Mundo 2
+:-------------------------:|:-------------------------:
+![image](https://user-images.githubusercontent.com/75852333/154866901-69049a73-7187-44f3-9f78-4588762798c0.png) | ![image](https://user-images.githubusercontent.com/75852333/154866904-31633b93-247f-4a7e-8f3c-57073a8a0205.png)
