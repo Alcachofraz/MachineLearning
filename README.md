@@ -211,3 +211,9 @@ Ao executar o agente, obtêm-se os seguintes resultados:
 Mundo 1  |  Mundo 2
 :-------------------------:|:-------------------------:
 ![image](https://user-images.githubusercontent.com/75852333/154866901-69049a73-7187-44f3-9f78-4588762798c0.png) | ![image](https://user-images.githubusercontent.com/75852333/154866904-31633b93-247f-4a7e-8f3c-57073a8a0205.png)
+
+## Conclusão
+
+A inteligência artificial é uma ferramenta muito poderosa, mas que pode resolver muitos problemas da vida real. Por exemplo, no âmbito da música, que foi abordado neste projeto, exploraram-se algumas situações em que um sistema de transcrição musical automática poderia ser muito útil. Estes sistemas serviriam, não para substituir os humanos, mas para estes usufruírem de uma ferramenta de auxílio que melhoraria o seu estilo de vida. No mundo da inteligência artificial, e em específico, da aprendizagem profunda, existem diversas técnicas que, dependendo da aplicação, do hardware e da complexidade, poderão ser mais vantajosas do que as restantes.  
+  
+De certa forma, é até assustadora a forma como alguns deste algoritmos se comportam de forma tão semelhante a algumas características humanas. Sobretudo no âmbito da aprendizagem por reforço. Seria interessante explorar novas estruturas do ambiente e até mesmo ambientes remodelados que apresentem, por exemplo, passagens com custo elevado, mas que em longo prazo sejam mais compensadoras, de forma a analisar o comportamento do agente.
